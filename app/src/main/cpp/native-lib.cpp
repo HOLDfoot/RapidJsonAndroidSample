@@ -8,11 +8,11 @@
 
 #include "mylog.h"
 
+using namespace rapidjson;
+
 void testJsonSet() ;
 
 void testSimpleWriter() ;
-
-using namespace rapidjson;
 
 
 extern "C"
@@ -55,11 +55,16 @@ void testSimpleWriter() {
     for (unsigned i = 0; i < 4; i++)
         writer.Uint(i);                 // all values are elements of the array.
     writer.EndArray();
+/*    writer.Key("jsonObject");
+    std::string strTemp = std::string(testJsonSet().GetString());
+    writer.String(strTemp.c_str());*/
     writer.EndObject();
 
     // {"hello":"world","t":true,"f":false,"n":null,"i":123,"pi":3.1416,"a":[0,1,2,3]}
     std::cout << s.GetString() << std::endl;
     LOGD("testSimpleWriter = %s", s.GetString());
+
+    testJsonSet();
 }
 
 void testJsonSet() {
@@ -77,6 +82,8 @@ void testJsonSet() {
     // Output {"project":"rapidjson","stars":11}
     std::cout << buffer.GetString() << std::endl;
     LOGD("buffer = %s", buffer.GetString());
+    std::string strTemp = std::string(buffer.GetString());
+    LOGD("buffer = %s", strTemp.c_str());
 }
 
 long getTimeStamp() {
