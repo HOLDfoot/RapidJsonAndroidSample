@@ -8,6 +8,10 @@
 
 #include "mylog.h"
 
+void testJsonSet() ;
+
+void testSimpleWriter() ;
+
 using namespace rapidjson;
 
 
@@ -21,7 +25,44 @@ Java_com_example_zhumingren_jsonbuildercplusdemo_MainActivity_stringFromJNI(
     std::string oauth = "abcd1234";
     std::string method = "GET";
     std::string url = "/v1/users";
+    // {"pt":"\/v1\/zhipei\/juquan","mt":"GET","qy":{"t":"6702074d6252b9350c9a70d9ec996dfb-3969988"}}
+    testSimpleWriter();
 
+    std::string hello = "Hello from C++";
+    LOGD("HELLO");
+    return env->NewStringUTF(hello.c_str());
+}
+
+void testSimpleWriter() {
+    StringBuffer s;
+    Writer<StringBuffer> writer(s);
+
+    writer.StartObject();               // Between StartObject()/EndObject(),
+    writer.Key("hello");                // output a key,
+    writer.String("world");             // follow by a value.
+    writer.Key("t");
+    writer.Bool(true);
+    writer.Key("f");
+    writer.Bool(false);
+    writer.Key("n");
+    writer.Null();
+    writer.Key("i");
+    writer.Uint(123);
+    writer.Key("pi");
+    writer.Double(3.1416);
+    writer.Key("a");
+    writer.StartArray();                // Between StartArray()/EndArray(),
+    for (unsigned i = 0; i < 4; i++)
+        writer.Uint(i);                 // all values are elements of the array.
+    writer.EndArray();
+    writer.EndObject();
+
+    // {"hello":"world","t":true,"f":false,"n":null,"i":123,"pi":3.1416,"a":[0,1,2,3]}
+    std::cout << s.GetString() << std::endl;
+    LOGD("testSimpleWriter = %s", s.GetString());
+}
+
+void testJsonSet() {
     // 1. 把 JSON 解析至 DOM。
     const char* json = "{\"project\":\"rapidjson\",\"stars\":10}";
     Document d;
@@ -36,9 +77,10 @@ Java_com_example_zhumingren_jsonbuildercplusdemo_MainActivity_stringFromJNI(
     // Output {"project":"rapidjson","stars":11}
     std::cout << buffer.GetString() << std::endl;
     LOGD("buffer = %s", buffer.GetString());
-
-    std::string hello = "Hello from C++";
-    LOGD("HELLO");
-    return env->NewStringUTF(hello.c_str());
 }
 
+long getTimeStamp() {
+    time_t t;
+    t = time(NULL);
+    return t;
+}
