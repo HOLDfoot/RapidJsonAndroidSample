@@ -4,10 +4,9 @@
 #define _MYLOG_H_
 
 
-#define   LOG_TAG    "native_log"
+#define   LOG_TAG    "JSON_BUILDER"
 
-#define DEBUG_SIGN 1 // 1 为校验, 0为不校验
-//#define DEBUG_LOG  // 通过注释该行代码关闭log开关
+#define DEBUG_LOG  // 通过注释该行代码关闭log开关
 
 #ifdef DEBUG_LOG
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
