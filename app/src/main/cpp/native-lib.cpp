@@ -6,14 +6,18 @@
 #include "rapidjson/stringbuffer.h"
 #include <iostream>
 
+#include <stdlib.h>
+
 #include "mylog.h"
 
 using namespace rapidjson;
 
-void testJsonSet() ;
+std::string testJsonSet() ;
 
 void testSimpleWriter() ;
 
+
+void testAddMember() ;
 
 extern "C"
 JNIEXPORT jstring
@@ -26,11 +30,38 @@ Java_com_example_zhumingren_jsonbuildercplusdemo_MainActivity_stringFromJNI(
     std::string method = "GET";
     std::string url = "/v1/users";
     // {"pt":"\/v1\/zhipei\/juquan","mt":"GET","qy":{"t":"6702074d6252b9350c9a70d9ec996dfb-3969988"}}
-    testSimpleWriter();
+    //testSimpleWriter();
+    testAddMember();
 
     std::string hello = "Hello from C++";
     LOGD("HELLO");
     return env->NewStringUTF(hello.c_str());
+}
+
+void testAddMember() {
+    rapidjson::Document document;
+    document.SetObject();
+    //rapidjson::MemoryPoolAllocator& allocator = document.GetAllocator();
+
+    rapidjson::Value info_objects(rapidjson::kObjectType);
+
+    rapidjson::Value idStr(rapidjson::kStringType);
+    idStr.SetString("123", 3);
+
+    const char* url = "success_url";
+    document.AddMember(rapidjson::StringRef(url), rapidjson::StringRef(url), document.GetAllocator());
+
+    std::string hello = "info_objects";
+    info_objects.AddMember(rapidjson::StringRef(hello.c_str()), rapidjson::StringRef(hello.c_str()), document.GetAllocator());
+    info_objects.AddMember(rapidjson::StringRef(hello.c_str()), rapidjson::StringRef(hello.c_str()), document.GetAllocator());
+
+    document.AddMember(rapidjson::StringRef(hello.c_str()), info_objects, document.GetAllocator());
+
+    rapidjson::StringBuffer buffer;
+    rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+    document.Accept(writer);
+    //const std::string json = document.GetString();
+    LOGD("testAddMember = %s", buffer.GetString());
 }
 
 void testSimpleWriter() {
@@ -55,19 +86,18 @@ void testSimpleWriter() {
     for (unsigned i = 0; i < 4; i++)
         writer.Uint(i);                 // all values are elements of the array.
     writer.EndArray();
-/*    writer.Key("jsonObject");
-    std::string strTemp = std::string(testJsonSet().GetString());
-    writer.String(strTemp.c_str());*/
+    writer.Key("jsonObject");
+    std::string strTemp = testJsonSet();
+    writer.String(strTemp.c_str());
+
     writer.EndObject();
 
     // {"hello":"world","t":true,"f":false,"n":null,"i":123,"pi":3.1416,"a":[0,1,2,3]}
     std::cout << s.GetString() << std::endl;
     LOGD("testSimpleWriter = %s", s.GetString());
-
-    testJsonSet();
 }
 
-void testJsonSet() {
+std::string testJsonSet() {
     // 1. 把 JSON 解析至 DOM。
     const char* json = "{\"project\":\"rapidjson\",\"stars\":10}";
     Document d;
@@ -84,6 +114,7 @@ void testJsonSet() {
     LOGD("buffer = %s", buffer.GetString());
     std::string strTemp = std::string(buffer.GetString());
     LOGD("buffer = %s", strTemp.c_str());
+    return strTemp;
 }
 
 long getTimeStamp() {
