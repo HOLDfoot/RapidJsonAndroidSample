@@ -44,9 +44,7 @@ void testAddMember() {
     //rapidjson::MemoryPoolAllocator& allocator = document.GetAllocator();
 
     rapidjson::Value info_objects(rapidjson::kObjectType);
-
-    rapidjson::Value idStr(rapidjson::kStringType);
-    idStr.SetString("123", 3);
+    rapidjson::Value array_objects(rapidjson::kArrayType);
 
     const char* url = "success_url";
     document.AddMember(rapidjson::StringRef(url), rapidjson::StringRef(url), document.GetAllocator());
@@ -56,6 +54,18 @@ void testAddMember() {
     info_objects.AddMember(rapidjson::StringRef(hello.c_str()), rapidjson::StringRef(hello.c_str()), document.GetAllocator());
 
     document.AddMember(rapidjson::StringRef(hello.c_str()), info_objects, document.GetAllocator());
+
+    for (int i = 0; i < 2; i++)
+    {
+        Value object(kObjectType);
+        Value nobject(kNumberType);
+        nobject.SetInt(i);
+        object.AddMember(StringRef("id"), nobject, document.GetAllocator());
+        object.AddMember(StringRef("name"), StringRef("zhangsan"), document.GetAllocator());
+        array_objects.PushBack(object, document.GetAllocator());
+    }
+
+    document.AddMember(rapidjson::StringRef(hello.c_str()), array_objects, document.GetAllocator());
 
     rapidjson::StringBuffer buffer;
     rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
