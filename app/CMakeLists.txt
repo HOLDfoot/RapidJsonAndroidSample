@@ -17,8 +17,8 @@ add_library( # Sets the name of the library.
              SHARED
 
              # Provides a relative path to your source file(s).
-             # src/main/cpp/rapidjson/*
-             # src/main/cpp/rapidjson/mylog.h
+             src/main/cpp/mylog.c
+             src/main/cpp/mylog.h
 
              # Provides a relative path to your source file(s).
              src/main/cpp/native-lib.cpp )

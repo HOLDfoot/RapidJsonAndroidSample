@@ -12,10 +12,9 @@
 
 using namespace rapidjson;
 
-std::string testJsonSet() ;
+void testJsonSet() ;
 
 void testSimpleWriter() ;
-
 
 void testAddMember() ;
 
@@ -34,14 +33,12 @@ Java_com_example_zhumingren_jsonbuildercplusdemo_MainActivity_stringFromJNI(
     testAddMember();
 
     std::string hello = "Hello from C++";
-    LOGD("HELLO");
     return env->NewStringUTF(hello.c_str());
 }
 
 void testAddMember() {
     rapidjson::Document document;
     document.SetObject();
-    //rapidjson::MemoryPoolAllocator& allocator = document.GetAllocator();
 
     rapidjson::Value info_objects(rapidjson::kObjectType);
     rapidjson::Value array_objects(rapidjson::kArrayType);
@@ -96,18 +93,13 @@ void testSimpleWriter() {
     for (unsigned i = 0; i < 4; i++)
         writer.Uint(i);                 // all values are elements of the array.
     writer.EndArray();
-    writer.Key("jsonObject");
-    std::string strTemp = testJsonSet();
-    writer.String(strTemp.c_str());
-
     writer.EndObject();
-
     // {"hello":"world","t":true,"f":false,"n":null,"i":123,"pi":3.1416,"a":[0,1,2,3]}
     std::cout << s.GetString() << std::endl;
     LOGD("testSimpleWriter = %s", s.GetString());
 }
 
-std::string testJsonSet() {
+void testJsonSet() {
     // 1. 把 JSON 解析至 DOM。
     const char* json = "{\"project\":\"rapidjson\",\"stars\":10}";
     Document d;
@@ -124,7 +116,6 @@ std::string testJsonSet() {
     LOGD("buffer = %s", buffer.GetString());
     std::string strTemp = std::string(buffer.GetString());
     LOGD("buffer = %s", strTemp.c_str());
-    return strTemp;
 }
 
 long getTimeStamp() {
