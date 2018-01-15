@@ -25,12 +25,10 @@ JNICALL
 Java_com_example_zhumingren_jsonbuildercplusdemo_MainActivity_stringFromJNI(
         JNIEnv *env,
         jobject /* this */) {
-    std::string oauth = "abcd1234";
-    std::string method = "GET";
-    std::string url = "/v1/users";
-    // {"pt":"\/v1\/zhipei\/juquan","mt":"GET","qy":{"t":"6702074d6252b9350c9a70d9ec996dfb-3969988"}}
-    //testSimpleWriter();
+
     testAddMember();
+    testSimpleWriter();
+    testJsonSet();
 
     std::string hello = "Hello from C++";
     return env->NewStringUTF(hello.c_str());
@@ -40,18 +38,20 @@ void testAddMember() {
     rapidjson::Document document;
     document.SetObject();
 
+    // 添加name, value
+    const char* name = "success_url";
+    const char* value = "https://www.google.com";
+    document.AddMember(rapidjson::StringRef(name), rapidjson::StringRef(value), document.GetAllocator());
+
+    // 添加json object
     rapidjson::Value info_objects(rapidjson::kObjectType);
+    std::string jsonObject = "json_object";
+    info_objects.AddMember(rapidjson::StringRef("class_room"), rapidjson::StringRef("NO. 6110"), document.GetAllocator());
+    info_objects.AddMember(rapidjson::StringRef("teacher_name"), rapidjson::StringRef("ZhangSanfeng"), document.GetAllocator());
+    document.AddMember(rapidjson::StringRef(jsonObject.c_str()), info_objects, document.GetAllocator());
+
+    // 添加json array
     rapidjson::Value array_objects(rapidjson::kArrayType);
-
-    const char* url = "success_url";
-    document.AddMember(rapidjson::StringRef(url), rapidjson::StringRef(url), document.GetAllocator());
-
-    std::string hello = "info_objects";
-    info_objects.AddMember(rapidjson::StringRef(hello.c_str()), rapidjson::StringRef(hello.c_str()), document.GetAllocator());
-    info_objects.AddMember(rapidjson::StringRef(hello.c_str()), rapidjson::StringRef(hello.c_str()), document.GetAllocator());
-
-    document.AddMember(rapidjson::StringRef(hello.c_str()), info_objects, document.GetAllocator());
-
     for (int i = 0; i < 2; i++)
     {
         Value object(kObjectType);
@@ -61,14 +61,14 @@ void testAddMember() {
         object.AddMember(StringRef("name"), StringRef("zhangsan"), document.GetAllocator());
         array_objects.PushBack(object, document.GetAllocator());
     }
-
-    document.AddMember(rapidjson::StringRef(hello.c_str()), array_objects, document.GetAllocator());
+    char * jsonArrayName = "jsonArrayName";
+    document.AddMember(rapidjson::StringRef(jsonArrayName), array_objects, document.GetAllocator());
 
     rapidjson::StringBuffer buffer;
     rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
     document.Accept(writer);
-    //const std::string json = document.GetString();
-    LOGD("testAddMember = %s", buffer.GetString());
+    std::string json = std::string(buffer.GetString());
+    LOGD("testAddMember = %s", json.c_str());
 }
 
 void testSimpleWriter() {
@@ -116,10 +116,4 @@ void testJsonSet() {
     LOGD("buffer = %s", buffer.GetString());
     std::string strTemp = std::string(buffer.GetString());
     LOGD("buffer = %s", strTemp.c_str());
-}
-
-long getTimeStamp() {
-    time_t t;
-    t = time(NULL);
-    return t;
 }
